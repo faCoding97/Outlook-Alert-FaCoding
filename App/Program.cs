@@ -651,14 +651,14 @@ internal sealed class AlertApplication : System.Windows.Application
         double height = Math.Min(740, SystemParameters.WorkArea.Height - 32);
         var window = new Window
         {
-            Title = "Outlook Alert settings 3.0.1", Width = width, Height = height,
+            Title = "Outlook Alert", Width = width, Height = height,
             MinWidth = Math.Min(480, width), MinHeight = Math.Min(400, height),
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            Background = Brush("#F2F2F7"), FontFamily = new FontFamily("Segoe UI")
+            Background = Brush("#F5F8FC"), FontFamily = new FontFamily("Segoe UI")
         };
         var panel = new StackPanel { Margin = new Thickness(32) };
         panel.Children.Add(new TextBlock { Text = "Outlook Alert", FontSize = 32, FontWeight = FontWeights.SemiBold, Foreground = Brush("#1C1C1E") });
-        panel.Children.Add(new TextBlock { Text = "Email alerts on every screen.", FontSize = 17, Foreground = Brush("#636366"), Margin = new Thickness(0, 6, 0, 24) });
+        panel.Children.Add(new TextBlock { Text = "Stay informed across every display.", FontSize = 17, Foreground = Brush("#667085"), Margin = new Thickness(0, 6, 0, 24) });
         _statusLabel = new TextBlock { Text = _status, FontSize = 22, FontWeight = FontWeights.SemiBold, Foreground = Brush("#1C1C1E"), TextWrapping = TextWrapping.Wrap };
         _detailLabel = new TextBlock { Text = _detail, FontSize = 15, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 18) };
         var statusPanel = new StackPanel { Margin = new Thickness(20) };
@@ -695,7 +695,7 @@ internal sealed class AlertApplication : System.Windows.Application
         };
         panel.Children.Add(logs);
         panel.Children.Add(new TextBlock { Text = "The preview checks appearance only. Send a new email to test alerts.", FontSize = 13, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap });
-        panel.Children.Add(new TextBlock { Text = "facoding", FontSize = 12, Foreground = Brush("#8E8E93"), HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 18, 0, 0) });
+        panel.Children.Add(new TextBlock { Text = "Built for KYCDD  ·  facoding", FontSize = 12, Foreground = Brush("#7B8798"), HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 18, 0, 0) });
         window.Content = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         window.Closing += (_, eventArgs) => { if (!_exiting) { eventArgs.Cancel = true; window.Hide(); } };
         _settingsWindow = window;
@@ -705,12 +705,29 @@ internal sealed class AlertApplication : System.Windows.Application
 
     private static Button ActionButton(string title, bool primary = true) => new()
     {
-        Content = title, FontSize = 17, FontWeight = FontWeights.SemiBold,
+        Content = title, FontSize = 16, FontWeight = FontWeights.SemiBold,
         Padding = new Thickness(18, 13, 18, 13), Margin = new Thickness(0, 0, 0, 10),
         Background = primary ? Brush("#007AFF") : System.Windows.Media.Brushes.White,
         Foreground = primary ? System.Windows.Media.Brushes.White : Brush("#0066CC"),
-        BorderThickness = new Thickness(0), Cursor = System.Windows.Input.Cursors.Hand
+        BorderThickness = new Thickness(0), Cursor = System.Windows.Input.Cursors.Hand,
+        Template = (ControlTemplate)System.Windows.Markup.XamlReader.Parse(ActionButtonTemplate)
     };
+
+    private const string ActionButtonTemplate = """
+<ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" TargetType="Button">
+    <Border x:Name="Surface" Background="{TemplateBinding Background}" CornerRadius="12"
+            Padding="{TemplateBinding Padding}" BorderThickness="2" BorderBrush="Transparent">
+        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Border>
+    <ControlTemplate.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.88"/></Trigger>
+        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Opacity" Value="0.75"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#003D80"/></Trigger>
+        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.45"/></Trigger>
+    </ControlTemplate.Triggers>
+</ControlTemplate>
+""";
 
     private static System.Windows.Media.Brush Brush(string color) => (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(color)!;
     private static void OpenOutlook()

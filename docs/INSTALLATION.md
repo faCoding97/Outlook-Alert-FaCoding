@@ -1,6 +1,6 @@
 # Install for every Windows account
 
-Version 3.0 installs Outlook Alert for the computer, with a separate app session and
+Version 3.1 installs Outlook Alert for the computer, with a separate app session and
 notification permission for each person. Windows 11 x64 and New Outlook are required.
 
 ## Install once as Administrator
@@ -8,7 +8,7 @@ notification permission for each person. Windows 11 x64 and New Outlook are requ
 1. Download the installer from [GitHub Releases](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases).
 2. Double-click it and accept Windows administrator approval, or use **Run as administrator**.
 3. Read the publisher notice, select the consent checkbox, and choose **Install for all users**.
-4. Finish setup. In your own normal Windows session, open **Outlook Alert by facoding** from Start.
+4. Finish setup. In your own normal Windows session, open **Outlook Alert** from Start.
 
 Setup verifies its embedded signed package, publisher certificate and launcher. It
 trusts the exact publisher leaf in the computer's Trusted People store, provisions
@@ -22,7 +22,7 @@ computer an administrator or organizational policy may prevent installation.
 
 ## First use in each account
 
-Each person opens **Outlook Alert by facoding** normally, without Run as administrator.
+Each person opens **Outlook Alert** normally, without Run as administrator.
 The small launcher registers or updates the already staged package for that caller,
 then opens the app. New and existing profiles can also receive the provisioned app at
 their next sign-in. If activation is deferred by Windows, sign out and sign in again.
@@ -59,9 +59,13 @@ Each user then opens the common Start menu entry to activate the new staged rele
 for their account. Compatible package identity preserves supported per-user settings.
 The native startup task remains controlled by that person and Windows policy.
 
+Version 3.1 uses **Outlook Alert** as the shared Start menu name and replaces the
+older **Outlook Alert by facoding** shortcut. A separately pinned shortcut may retain
+its previous label; use the current Start entry when creating a new pin.
+
 ## Remove for everyone
 
-In **Windows Settings > Apps > Installed apps**, choose **Outlook Alert by facoding**
+In **Windows Settings > Apps > Installed apps**, choose **Outlook Alert**
 (the machine installer entry), then Uninstall. Approve Administrator access and the
 explicit all-account removal confirmation. This removes provisioning, requests removal
 of the exact registered package family for every user, and removes the common Start
@@ -76,6 +80,9 @@ The publisher certificate remains in Trusted People. An administrator may remove
 exact fingerprint when it is no longer needed; see [privacy and signing](PRIVACY.md).
 
 ## Verification scope
+
+The CI record below applies to the earlier 3.0.1 source. Fresh 3.1.0 verification
+has not yet been recorded here.
 
 [Windows CI run 45408497239](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45408497239) passed for
 [source commit 3dd4400](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/3dd4400960560eeaf7e15621af1151ace128ee85) on a Windows Server 2025 runner. It built the app,

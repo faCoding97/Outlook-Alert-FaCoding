@@ -53,6 +53,13 @@ jobs:
           $source = Get-Content App/PopupPresenter.cs -Raw
           $match = [regex]::Match($source, 'private const string AlertXaml = """\r?\n([\s\S]*?)\r?\n""";')
           if (-not $match.Success) { throw 'Alert markup was not found.' }
+          $settingsSource = Get-Content App/Program.cs -Raw
+          $templateMatch = [regex]::Match($settingsSource, 'private const string ActionButtonTemplate = """\r?\n([\s\S]*?)\r?\n""";')
+          if (-not $templateMatch.Success) { throw 'Settings button markup was not found.' }
+          $button = [Windows.Controls.Button]::new()
+          $button.Content = 'Enable monitoring'
+          $button.Template = [Windows.Markup.XamlReader]::Parse($templateMatch.Groups[1].Value)
+          [void]$button.ApplyTemplate()
           $view = [Windows.Markup.XamlReader]::Parse($match.Groups[1].Value)
           try {
             $view.FindName('CountText').Text = '1 new email'

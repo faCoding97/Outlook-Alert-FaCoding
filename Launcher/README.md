@@ -21,8 +21,9 @@ admin-authored `deployment.xml`. The XML records the actual provisioned package
 full name, derived family name, application ID, and required version. Setup
 refuses unexpected package identities or junction installation directories.
 
-A common Start menu shortcut named **Outlook Alert by facoding** starts the
-small launcher normally in the person who clicks it. The launcher checks that
+A common Start menu shortcut named **Outlook Alert** starts the
+small launcher normally in the person who clicks it. Version 3.1 replaces the
+older shared shortcut named **Outlook Alert by facoding**. The launcher checks that
 person's registered package family/version. If missing or outdated, it asks
 Windows to register the already staged family for that account, verifies the
 result, and opens the app through its AppsFolder identity. It does not request

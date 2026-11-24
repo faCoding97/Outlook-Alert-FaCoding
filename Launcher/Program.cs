@@ -23,7 +23,7 @@ namespace Facoding.OutlookAlert.Launcher
             Application.SetCompatibleTextRenderingDefault(false);
             if (args.Length != 0)
             {
-                MessageBox.Show("Open Outlook Alert by facoding from the Start menu.", "Outlook Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Open Outlook Alert from the Start menu.", "Outlook Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return 1;
             }
             using (var identity = WindowsIdentity.GetCurrent())
@@ -48,7 +48,7 @@ namespace Facoding.OutlookAlert.Launcher
 
         internal LaunchWindow()
         {
-            Text = "Outlook Alert by facoding";
+            Text = "Outlook Alert";
             Font = new Font("Segoe UI", 10F);
             AutoScaleDimensions = new SizeF(96, 96);
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -64,7 +64,7 @@ namespace Facoding.OutlookAlert.Launcher
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             var heading = new Label { Text = "Opening Outlook Alert", AutoSize = true, Font = new Font("Segoe UI", 18F, FontStyle.Bold), Margin = new Padding(0, 0, 0, 14) };
-            status = new Label { Text = "Checking the application for your Windows account...", AutoSize = true, Dock = DockStyle.Fill, MaximumSize = new Size(460, 0), Margin = new Padding(0, 0, 0, 18) };
+            status = new Label { Text = "Preparing your Windows account...", AutoSize = true, Dock = DockStyle.Fill, MaximumSize = new Size(460, 0), Margin = new Padding(0, 0, 0, 18) };
             var progress = new ProgressBar { Dock = DockStyle.Fill, Height = 6, Style = ProgressBarStyle.Marquee, MarqueeAnimationSpeed = 30 };
             panel.Controls.Add(heading, 0, 0); panel.Controls.Add(status, 0, 1); panel.Controls.Add(progress, 0, 2);
             Controls.Add(panel);

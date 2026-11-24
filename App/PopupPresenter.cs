@@ -78,21 +78,21 @@ internal sealed class PopupPresenter
             <Setter Property="Background" Value="#007AFF"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontSize" Value="21"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="ButtonSurface" Background="{TemplateBinding Background}"
-                                CornerRadius="18" BorderThickness="3" BorderBrush="Transparent">
+                                CornerRadius="16" BorderThickness="3" BorderBrush="Transparent">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonSurface" Property="Background" Value="#0066D6"/>
+                                <Setter TargetName="ButtonSurface" Property="Background" Value="#0068DB"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonSurface" Property="Background" Value="#005BBE"/>
+                                <Setter TargetName="ButtonSurface" Property="Background" Value="#005CC2"/>
                             </Trigger>
                             <Trigger Property="IsKeyboardFocused" Value="True">
                                 <Setter TargetName="ButtonSurface" Property="BorderBrush" Value="#003D80"/>
@@ -105,72 +105,88 @@ internal sealed class PopupPresenter
     </Window.Resources>
     <Viewbox Stretch="Uniform" StretchDirection="Both">
         <Border Width="960" Height="640" Background="Transparent">
-            <Border Margin="16" Padding="40" CornerRadius="32"
-                    Background="#FFFFFF" BorderBrush="#E5E5EA" BorderThickness="1">
+            <Border Margin="16" Padding="36" CornerRadius="28"
+                    BorderBrush="#DCE5F1" BorderThickness="1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0.8,1">
+                        <GradientStop Color="#F5F9FF" Offset="0"/>
+                        <GradientStop Color="#FFFFFF" Offset="0.48"/>
+                        <GradientStop Color="#FFFFFF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
                 <Border.Effect>
-                    <DropShadowEffect Color="#101828" BlurRadius="24" ShadowDepth="4" Opacity="0.16"/>
+                    <DropShadowEffect Color="#172B4D" BlurRadius="22" ShadowDepth="4" Opacity="0.13"/>
                 </Border.Effect>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="64"/>
-                        <RowDefinition Height="28"/>
-                        <RowDefinition Height="112"/>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition Height="20"/>
-                        <RowDefinition Height="36"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="72"/>
-                        <RowDefinition Height="16"/>
                         <RowDefinition Height="24"/>
+                        <RowDefinition Height="1"/>
+                        <RowDefinition Height="36"/>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="42"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="42"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="68"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" x:Name="DragHeader" Background="Transparent">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="56"/>
                             <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="110"/>
                         </Grid.ColumnDefinitions>
-                        <Border CornerRadius="18" Background="#007AFF">
-                            <Viewbox Width="38" Height="38">
+                        <Border CornerRadius="16" Background="#007AFF" Height="56" VerticalAlignment="Center">
+                            <Viewbox Width="32" Height="32">
                                 <Canvas Width="40" Height="40">
                                     <Path Data="M 5,10 L 35,10 L 35,30 L 5,30 Z M 5,11 L 20,22 L 35,11"
-                                          Stroke="White" StrokeThickness="2.4" StrokeLineJoin="Round"/>
+                                          Stroke="White" StrokeThickness="2.3" StrokeLineJoin="Round"/>
                                 </Canvas>
                             </Viewbox>
                         </Border>
-                        <TextBlock Grid.Column="2" Text="Outlook" VerticalAlignment="Center"
-                                   FontSize="24" FontWeight="SemiBold" Foreground="#1C1C1E"/>
-                        <TextBlock Grid.Column="3" x:Name="TimeText" Text="--:--" FontSize="22"
-                                   Foreground="#636366" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <TextBlock Text="Outlook Alert" FontSize="22" FontWeight="SemiBold" Foreground="#182230"/>
+                            <TextBlock Text="Email notification" FontSize="14" Foreground="#667085" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <Border Grid.Column="3" Background="#EDF3FB" CornerRadius="12"
+                                Padding="14,9" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock x:Name="TimeText" Text="--:--" FontSize="19" FontWeight="Medium"
+                                       Foreground="#526176"/>
+                        </Border>
                     </Grid>
-                    <TextBlock Grid.Row="2" FontSize="46" FontWeight="SemiBold" LineHeight="54"
-                               Foreground="#1C1C1E" TextWrapping="Wrap">
-                        <Run Text="You have a new"/><LineBreak/><Run Text="email."/>
-                    </TextBlock>
-                    <TextBlock Grid.Row="3" Text="Please check your Outlook inbox."
-                               FontSize="21" Foreground="#636366" VerticalAlignment="Center"/>
-                    <Border Grid.Row="5" HorizontalAlignment="Left" Background="#EAF3FF"
-                            CornerRadius="18" Padding="16,0">
+                    <Border Grid.Row="2" Background="#E3EAF3"/>
+                    <TextBlock Grid.Row="4" Text="New email received" FontSize="42" FontWeight="SemiBold"
+                               Foreground="#182230" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="5" Text="Please review your Outlook inbox."
+                               FontSize="20" Foreground="#667085" VerticalAlignment="Center"/>
+                    <Border Grid.Row="7" HorizontalAlignment="Left" Background="#EAF3FF"
+                            BorderBrush="#DCEBFF" BorderThickness="1" CornerRadius="12" Padding="15,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" Fill="#007AFF" Margin="0,0,9,0"/>
-                            <TextBlock x:Name="CountText" Text="1 new email" Foreground="#005CBF"
-                                       FontSize="16" FontWeight="SemiBold"/>
+                            <Ellipse Width="7" Height="7" Fill="#007AFF" Margin="0,0,9,0"/>
+                            <TextBlock x:Name="CountText" Text="1 new email" Foreground="#075EBF"
+                                       FontSize="15" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Border>
-                    <Button Grid.Row="7" x:Name="AcknowledgeButton" Style="{StaticResource AcknowledgeStyle}"
-                            AutomationProperties.Name="Got it, close all alerts">
+                    <Button Grid.Row="9" x:Name="AcknowledgeButton" Style="{StaticResource AcknowledgeStyle}"
+                            AutomationProperties.Name="Acknowledge and close alerts on all screens">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center">
+                            <Viewbox Width="21" Height="21" Margin="0,0,12,0" VerticalAlignment="Center">
                                 <Path Data="M 3,12 L 9,18 L 21,5" Stroke="White" StrokeThickness="2.6"
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
                             </Viewbox>
-                            <TextBlock Text="Got it, close all alerts" Foreground="White"
-                                       FontSize="22" FontWeight="SemiBold"/>
+                            <TextBlock Text="Acknowledge" Foreground="White" FontSize="21" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
-                    <TextBlock Grid.Row="9" Text="facoding" Foreground="#636366" FontSize="13"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                               AutomationProperties.Name="Made by facoding"/>
+                    <Grid Grid.Row="11">
+                        <TextBlock Text="Built for KYCDD" Foreground="#7B8798" FontSize="12"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <TextBlock Text="facoding" Foreground="#7B8798" FontSize="12"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   AutomationProperties.Name="Made by facoding"/>
+                    </Grid>
                 </Grid>
             </Border>
         </Border>

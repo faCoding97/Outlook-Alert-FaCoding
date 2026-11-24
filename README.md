@@ -1,6 +1,6 @@
 # Outlook Alert
 
-A Windows desktop app by [facoding](https://github.com/faCoding97) that makes new Outlook mail easier to notice when you work across several screens.
+A Windows desktop app that makes new Outlook mail easier to notice when you work across several screens.
 
 When New Outlook posts a Windows notification, Outlook Alert displays a large card on every connected display. The card stays visible until you acknowledge it. One click closes the cards on all screens.
 
@@ -10,7 +10,7 @@ When New Outlook posts a Windows notification, Outlook Alert displays a large ca
 
 - Shows a clear, persistent alert on each display in an extended desktop.
 - Uses a light interface with blue controls and rounded corners.
-- Shows **“You have a new email.”** and **“Please check your Outlook inbox.”**
+- Shows **“New email received”** and **“Please review your Outlook inbox.”**
 - Closes every alert when you acknowledge one of them.
 - Can start automatically when you sign in to Windows.
 - Filters the exact installed New Outlook application identity, so Telegram, WhatsApp and other apps cannot trigger its large alert.
@@ -25,7 +25,7 @@ It is useful when Outlook is minimized, you often switch between applications, o
 
 Installer source rendered during the Windows layout check. The footer stays reachable when the window is resized.
 
-The initial **3.0.1 public release is a pre-release**. The installer is prepared; its public release upload is pending. Windows CI checks the installer layout, but real multi-profile provisioning, first-use permission and removal still need a Windows 11 device check.
+The next public build is **3.1.0 (pre-release)**. Its public release upload is pending. Windows CI checks the installer layout, but real multi-profile provisioning, first-use permission and removal still need a Windows 11 device check.
 
 ## Requirements
 
@@ -38,9 +38,9 @@ The installer includes the app runtime. You do not need Visual Studio, a .NET SD
 
 ## Install and start
 
-1. Download `OutlookAlert-Setup-3.0.1.exe` from [Releases](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases).
+1. Download `OutlookAlert-Setup-3.1.0.exe` from [Releases](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases).
 2. Double-click setup and approve Administrator access, or choose **Run as administrator**. Select the publisher consent and **Install for all users**.
-3. In your own normal Windows session, open **Outlook Alert by facoding** from Start, select **Enable monitoring**, and allow Windows notification access.
+3. In your own normal Windows session, open **Outlook Alert** from Start, select **Enable monitoring**, and allow Windows notification access.
 4. Check that the app reports that monitoring is ready. Enable automatic startup and confirm the displayed startup status.
 5. Send a **new** test email after monitoring becomes ready.
 
@@ -108,8 +108,10 @@ No open-source license has been selected. Copyright (c) 2026 facoding. All right
 
 Third-party components retain their own applicable licenses and notices, which are included with the distributed runtime.
 
-## Author
+## Credits
 
-Made by **facoding** · [GitHub profile](https://github.com/faCoding97)
+Developed by facoding for KYCDD, initially for work across multiple displays. Available for other New Outlook users.
+
+[facoding on GitHub](https://github.com/faCoding97)
 
 Outlook Alert is an independent project and is not affiliated with or endorsed by Microsoft. Outlook and Windows are Microsoft trademarks.

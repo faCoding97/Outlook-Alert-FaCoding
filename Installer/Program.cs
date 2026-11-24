@@ -57,7 +57,7 @@ namespace OutlookAlert.Setup
         {
             if (args.Length == 1 && args[0] == "--uninstall")
             {
-                if (MessageBox.Show("Remove Outlook Alert from all Windows accounts on this computer? This removes its machine provisioning and installed user packages. Other applications and their notification settings are not changed.", "Uninstall Outlook Alert by facoding", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes) return 0;
+                if (MessageBox.Show("Remove Outlook Alert from all Windows accounts on this computer? This removes its machine provisioning and installed user packages. Other applications and their notification settings are not changed.", "Uninstall Outlook Alert", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes) return 0;
                 using (var window = new UninstallWindow())
                 {
                     Application.Run(window);
@@ -155,7 +155,7 @@ namespace OutlookAlert.Setup
         internal SetupWindow()
         {
             SuspendLayout();
-            Text = "Outlook Alert Setup 3.0.1";
+            Text = "Outlook Alert Setup 3.1.0";
             Font = new Font("Segoe UI", 10F);
             ForeColor = Color.FromArgb(28, 28, 30);
             BackColor = Color.White;
@@ -265,10 +265,14 @@ namespace OutlookAlert.Setup
             install.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 91, 190);
             install.Click += InstallClicked;
             AddRow(footer, install);
+            var builtFor = WrappedLabel("Built for KYCDD", 8.5F, FontStyle.Regular,
+                Color.FromArgb(142, 142, 147), new Padding(0, 10, 0, 0));
+            builtFor.TextAlign = ContentAlignment.MiddleCenter;
+            AddRow(footer, builtFor);
             var signature = new LinkLabel
             {
                 Text = "facoding", AutoSize = true,
-                Anchor = AnchorStyles.None, Margin = new Padding(0, 12, 0, 0),
+                Anchor = AnchorStyles.None, Margin = new Padding(0, 4, 0, 0),
                 LinkColor = Color.FromArgb(0, 102, 204),
                 ActiveLinkColor = Color.FromArgb(0, 91, 190),
                 LinkBehavior = LinkBehavior.HoverUnderline,
@@ -400,7 +404,7 @@ namespace OutlookAlert.Setup
             {
                 await Task.Run((Action)InstallApplication);
                 installed = true;
-                status.Text = "Installed for all Windows accounts. Open Outlook Alert by facoding from Start in your own account.";
+                status.Text = "Installed for all Windows accounts. Open Outlook Alert from Start in your own account.";
                 progress.Value = 100;
                 install.Text = "Finish";
                 install.Enabled = true;
@@ -425,7 +429,7 @@ namespace OutlookAlert.Setup
 
         internal UninstallWindow()
         {
-            Text = "Uninstall Outlook Alert by facoding";
+            Text = "Uninstall Outlook Alert";
             Font = new Font("Segoe UI", 10F);
             AutoScaleDimensions = new SizeF(96, 96);
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -463,7 +467,8 @@ namespace OutlookAlert.Setup
     internal static class MachineDeployment
     {
         internal static readonly string InstallRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "facoding", "OutlookAlert");
-        internal static readonly string ShortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms), "Outlook Alert by facoding.lnk");
+        internal static readonly string ShortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms), "Outlook Alert.lnk");
+        internal static readonly string LegacyShortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms), "Outlook Alert by facoding.lnk");
         internal const string UninstallKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\facoding.OutlookAlert";
 
         internal static void RequireAdministrator()
@@ -544,10 +549,17 @@ namespace OutlookAlert.Setup
                     WriteConfiguration(configuration, Path.Combine(releaseDirectory, "deployment.xml"));
                     step("Creating the shared Start menu entry...", 85);
                     CreateShortcut(installedLauncher, releaseDirectory);
+                    // Remove only the exact shared shortcut created by earlier releases,
+                    // after the replacement has been saved successfully.
+                    if (File.Exists(LegacyShortcutPath))
+                    {
+                        File.Delete(LegacyShortcutPath);
+                        log("Removed the previous Start menu shortcut.");
+                    }
                     using (var key = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(UninstallKey))
                     {
                         if (key == null) throw new InvalidOperationException("Windows could not create the machine uninstall entry.");
-                        key.SetValue("DisplayName", "Outlook Alert by facoding");
+                        key.SetValue("DisplayName", "Outlook Alert");
                         key.SetValue("DisplayVersion", package.Version.ToString());
                         key.SetValue("Publisher", "facoding");
                         key.SetValue("InstallLocation", InstallRoot);
@@ -558,9 +570,9 @@ namespace OutlookAlert.Setup
                         key.SetValue("NoRepair", 1, Microsoft.Win32.RegistryValueKind.DWord);
                     }
                     log("Provisioned " + fullName + " for this computer.");
-                    log("Each account can open Outlook Alert by facoding from Start. Its launcher registers or updates that account when required.");
+                    log("Each account can open Outlook Alert from Start. Its launcher registers or updates that account when required.");
                     log("Every user must separately allow notification access and enable startup once. Provisioning never grants those permissions.");
-                    step("Installed for all Windows accounts. Open Outlook Alert by facoding from Start in your own account.", 100);
+                    step("Installed for all Windows accounts. Open Outlook Alert from Start in your own account.", 100);
                 }
             }
             catch (Exception ex)
@@ -650,7 +662,7 @@ namespace OutlookAlert.Setup
                 Type type = shortcut.GetType();
                 type.InvokeMember("TargetPath", BindingFlags.SetProperty, null, shortcut, new object[] { launcher });
                 type.InvokeMember("WorkingDirectory", BindingFlags.SetProperty, null, shortcut, new object[] { directory });
-                type.InvokeMember("Description", BindingFlags.SetProperty, null, shortcut, new object[] { "Outlook Alert by facoding. Opens for the current Windows account." });
+                type.InvokeMember("Description", BindingFlags.SetProperty, null, shortcut, new object[] { "Outlook Alert. Opens for the current Windows account." });
                 type.InvokeMember("IconLocation", BindingFlags.SetProperty, null, shortcut, new object[] { launcher + ",0" });
                 type.InvokeMember("Save", BindingFlags.InvokeMethod, null, shortcut, null);
             }
@@ -720,6 +732,7 @@ namespace OutlookAlert.Setup
                 "foreach($p in $registered){Remove-AppxPackage -Package $p.PackageFullName -AllUsers -ErrorAction Stop}";
             RunPowerShell(command, message => { }, 600000);
             if (File.Exists(ShortcutPath)) File.Delete(ShortcutPath);
+            if (File.Exists(LegacyShortcutPath)) File.Delete(LegacyShortcutPath);
             Microsoft.Win32.Registry.LocalMachine.DeleteSubKeyTree(UninstallKey, false);
         }
 
