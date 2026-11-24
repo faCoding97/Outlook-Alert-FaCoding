@@ -73,8 +73,8 @@ Before publication, check the source and assets for personal mailbox addresses, 
 
 ## Windows layout checks
 
-[Windows CI run 45404539302](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45404539302) completed successfully for
-[source commit 94f348c](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/94f348c0c4e4dcecc62bd64d5d8fca393f3830d7) on Windows Server 2025. The app, launcher and
+[Windows CI run 45408497239](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45408497239) completed successfully for
+[source commit 3dd4400](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/3dd4400960560eeaf7e15621af1151ace128ee85) on Windows Server 2025. The app, launcher and
 installer source builds passed, followed by all 24 notification-policy checks and
 all 9 installer layout cases.
 

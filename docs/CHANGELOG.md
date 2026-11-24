@@ -7,6 +7,8 @@
 - Shortens setup copy and removes mailbox-specific guidance from the installer.
 - Replaces the unpublished 3.0.0 release candidate.
 
+Verification: [Windows CI run 45408497239](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45408497239) passed source builds, 24 policy checks, 9 installer layout cases and rendering of the actual alert markup for source commit `3dd4400`. Real multi-user installation remains a device-validation item.
+
 ## 3.0.0 — 2026-11-24 (pre-release)
 
 - Adds a small facoding signature to the alert and creator details to setup.

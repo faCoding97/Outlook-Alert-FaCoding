@@ -4,7 +4,7 @@ A Windows desktop app by [facoding](https://github.com/faCoding97) that makes ne
 
 When New Outlook posts a Windows notification, Outlook Alert displays a large card on every connected display. The card stays visible until you acknowledge it. One click closes the cards on all screens.
 
-[Download the Windows installer](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases/tag/v3.0.1) · [Installation guide](docs/INSTALLATION.md) · [Build from source](docs/BUILDING.md) · [Privacy](docs/PRIVACY.md)
+[Windows releases](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases) · [Installation guide](docs/INSTALLATION.md) · [Build from source](docs/BUILDING.md) · [Privacy](docs/PRIVACY.md)
 
 ## What it does
 
@@ -19,11 +19,13 @@ When New Outlook posts a Windows notification, Outlook Alert displays a large ca
 
 It is useful when Outlook is minimized, you often switch between applications, or you miss a small notification on another monitor.
 
+![Outlook Alert with a short message and facoding signature](docs/assets/alert-preview.png)
+
 ![Outlook Alert installer with a scrollable body and fixed Install footer](docs/assets/installer-windows-layout.png)
 
 Installer source rendered during the Windows layout check. The footer stays reachable when the window is resized.
 
-The initial **3.0 public release is a pre-release**. Windows CI checks the installer layout, but real multi-profile provisioning, first-use permission and removal still need a Windows 11 device check.
+The initial **3.0.1 public release is a pre-release**. The installer is prepared; its public release upload is pending. Windows CI checks the installer layout, but real multi-profile provisioning, first-use permission and removal still need a Windows 11 device check.
 
 ## Requirements
 
@@ -36,7 +38,7 @@ The installer includes the app runtime. You do not need Visual Studio, a .NET SD
 
 ## Install and start
 
-1. Download `OutlookAlert-Setup-3.0.1.exe` from [Releases](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases/tag/v3.0.1).
+1. Download `OutlookAlert-Setup-3.0.1.exe` from [Releases](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases).
 2. Double-click setup and approve Administrator access, or choose **Run as administrator**. Select the publisher consent and **Install for all users**.
 3. In your own normal Windows session, open **Outlook Alert by facoding** from Start, select **Enable monitoring**, and allow Windows notification access.
 4. Check that the app reports that monitoring is ready. Enable automatic startup and confirm the displayed startup status.

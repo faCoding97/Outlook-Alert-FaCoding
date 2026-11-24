@@ -77,8 +77,8 @@ exact fingerprint when it is no longer needed; see [privacy and signing](PRIVACY
 
 ## Verification scope
 
-[Windows CI run 45404539302](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45404539302) passed for
-[source commit 94f348c](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/94f348c0c4e4dcecc62bd64d5d8fca393f3830d7) on a Windows Server 2025 runner. It built the app,
+[Windows CI run 45408497239](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45408497239) passed for
+[source commit 3dd4400](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/3dd4400960560eeaf7e15621af1151ace128ee85) on a Windows Server 2025 runner. It built the app,
 launcher and installer source, passed 24 notification-policy checks, and passed all
 9 installer viewport/font-stress cases.
 
