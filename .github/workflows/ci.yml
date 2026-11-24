@@ -1,0 +1,56 @@
+name: Windows build and layout
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up .NET 10 SDK
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build Windows app
+        run: dotnet build App/OutlookAlert.csproj -c Release
+      - name: Build per-user launcher
+        run: dotnet build Launcher/OutlookAlert.Launcher.csproj -c Release
+      - name: Build installer source
+        # This is a compile check. A release installer additionally requires the
+        # signed, pinned embedded payloads, which are not stored in source control.
+        run: dotnet build Installer/OutlookAlert.Setup.csproj -c Release
+      - name: Check notification identity and duplicate handling
+        run: dotnet run --project Tests/NotificationGate.Tests.csproj -c Release
+      - name: Build isolated installer layout check
+        run: dotnet build Tests.Windows/LayoutSmoke.csproj -c Release
+      - name: Check installer layout on Windows
+        shell: pwsh
+        run: |
+          & .\Tests.Windows\bin\Release\net48\OutlookAlert.LayoutSmoke.exe artifacts/layout
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Save layout results and owned-form screenshots
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: installer-layout-results
+          path: artifacts/layout/
+          if-no-files-found: warn
+          retention-days: 14

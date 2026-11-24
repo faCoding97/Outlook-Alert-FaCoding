@@ -1,0 +1,51 @@
+# .NET / editor outputs
+**/bin/
+**/obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.cache
+*.pdb
+
+# Published binaries and release payloads belong in GitHub Releases
+Publish/
+Payload/
+artifacts/
+releases/
+*.exe
+*.dll
+*.msix
+*.appx
+*.msixbundle
+*.appxbundle
+*.nupkg
+
+# Build-only tools and package staging
+Packaging/toolchain/
+Packaging/stage/
+Packaging/validation-unpack/
+
+# Private signing material: never commit or release
+Packaging/signing-private/
+**/signing-private/
+*.key
+*.pem
+*.pfx
+*.p12
+*.snk
+
+# Local settings, reports and environment files
+.env
+.env.*
+!.env.example
+settings.json
+diagnostics.log
+*.log
+ReleaseValidation.json
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini

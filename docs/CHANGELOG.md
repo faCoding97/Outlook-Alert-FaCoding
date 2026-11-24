@@ -1,0 +1,29 @@
+# Changelog
+
+## 3.0.0 — 2026-11-24 (pre-release)
+
+- Adds a small facoding signature to the alert and creator details to setup.
+- Replaces fixed installer positions with wrapping, scrolling layouts and a visible action footer.
+- Supports Administrator installation for all existing and new Windows accounts.
+- Adds a common Start menu launcher that activates/updates the app in each caller's own account.
+- Adds explicit all-account uninstall and documents separate per-user notification/startup permission.
+- Replaces organization-specific guidance with generic account selection instructions.
+- Adds public installation/privacy/build documentation and Windows layout checks.
+- Publishes source without an open-source license, as selected by the author.
+
+Real Windows 11 multi-profile deployment and uninstall remain device-validation items;
+Windows CI checks do not claim to exercise those privileged installation paths.
+
+## 2.1 — earlier desktop build
+
+- Replaces the ordinary per-event full notification-list read with lookup of the specific Added notification ID.
+- Removes the intentional 150 ms event debounce.
+- Bounds and coalesces event handling and recent duplicate history.
+- Adds metadata-only timing records for investigating processing delays.
+- Changes the card text to “You have a new email.” and “Please check your Outlook inbox.”
+
+## 2.0 — earlier desktop build
+
+- Introduces the packaged native Windows notification listener and exact New Outlook identity filter.
+- Adds the light, rounded multi-display alert and shared acknowledgement.
+- Adds setup, notification permission, tray controls and native automatic-startup support.

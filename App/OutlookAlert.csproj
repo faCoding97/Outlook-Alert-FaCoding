@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>OutlookAlert</AssemblyName>
+    <Authors>facoding</Authors>
+    <Company>facoding</Company>
+    <Copyright>Copyright (c) 2026 facoding</Copyright>
+    <RootNamespace>Faraz.OutlookAlert</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>../Packaging/Assets/App.ico</ApplicationIcon>
+    <Version>3.0.0</Version>
+    <!-- WPF owns all visible windows; its per-monitor DPI manifest is intentional. -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+  </PropertyGroup>
+</Project>
