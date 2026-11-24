@@ -69,8 +69,8 @@ internal sealed class AlertApplication : System.Windows.Application
     private Button? _enableButton;
     private readonly PopupPresenter _popups = new();
     private readonly AlertSettings _settings;
-    private string _status = "Monitoring is off";
-    private string _detail = "Enable access to Windows notifications to begin.";
+    private string _status = "Alerts are off";
+    private string _detail = "Enable monitoring to start.";
     private readonly EventWaitHandle _showSignal = new(false, EventResetMode.AutoReset, @"Local\FarazOutlookAlertNativeShow");
     private RegisteredWaitHandle? _showRegistration;
 
@@ -181,7 +181,7 @@ internal sealed class AlertApplication : System.Windows.Application
             try { _ = Package.Current.Id.Name; }
             catch
             {
-                StopMonitoring("Install the packaged app first", "This executable needs its MSIX package identity. Run the installer, then open Outlook Alert from Start.");
+                StopMonitoring("Installation required", "Run the installer, then open Outlook Alert from Start.");
                 return false;
             }
             if (!await DiscoverOutlookAsync())
@@ -220,7 +220,7 @@ internal sealed class AlertApplication : System.Windows.Application
             catch (Exception ex)
             {
                 LogError("subscribe", ex);
-                StopMonitoring("Windows could not attach the listener", "Monitoring is off. Windows could not connect to notification events. Reinstall the packaged app or share the local diagnostic log with support.");
+                StopMonitoring("Alerts could not start", "Enable monitoring again. If the problem continues, open the log.");
                 return false;
             }
             var gapNotifications = await ReadOutlookStampsAsync();
@@ -232,7 +232,7 @@ internal sealed class AlertApplication : System.Windows.Application
             _priming = false;
             _settings.MonitoringEnabled = true;
             SaveSettings();
-            SetStatus("Ready for a real email test", "Only notifications from the installed New Outlook application can trigger alerts. Send a fresh test email after this status appears.");
+            SetStatus("Monitoring Outlook", "New Outlook notifications will appear on all screens.");
             Log("monitoring_ready;baseline_count=" + _gate.KnownCount);
             if (gapAdded > 0)
             {
@@ -499,7 +499,7 @@ internal sealed class AlertApplication : System.Windows.Application
                     long showing = Stopwatch.GetTimestamp();
                     _popups.Show(1, DateTimeOffset.Now, false);
                     long shown = Stopwatch.GetTimestamp();
-                    SetStatus("Monitoring Outlook", "A new Outlook notification was detected. Only a real incoming email test confirms your mailbox settings.");
+                    SetStatus("Monitoring Outlook", "Alert displayed.");
                     // This is platform notification age, NOT native-toast-visible latency.
                     long creationAgeMs = Math.Max(0, (pending.CallbackUtc.UtcDateTime.Ticks - stamp.CreationUtcTicks) / TimeSpan.TicksPerMillisecond);
                     string timing = "outlook_notification_added" +
@@ -651,14 +651,14 @@ internal sealed class AlertApplication : System.Windows.Application
         double height = Math.Min(740, SystemParameters.WorkArea.Height - 32);
         var window = new Window
         {
-            Title = "Outlook Alert settings 3.0", Width = width, Height = height,
+            Title = "Outlook Alert settings 3.0.1", Width = width, Height = height,
             MinWidth = Math.Min(480, width), MinHeight = Math.Min(400, height),
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
             Background = Brush("#F2F2F7"), FontFamily = new FontFamily("Segoe UI")
         };
         var panel = new StackPanel { Margin = new Thickness(32) };
         panel.Children.Add(new TextBlock { Text = "Outlook Alert", FontSize = 32, FontWeight = FontWeights.SemiBold, Foreground = Brush("#1C1C1E") });
-        panel.Children.Add(new TextBlock { Text = "A clear alert on every connected display.", FontSize = 17, Foreground = Brush("#636366"), Margin = new Thickness(0, 6, 0, 24) });
+        panel.Children.Add(new TextBlock { Text = "Email alerts on every screen.", FontSize = 17, Foreground = Brush("#636366"), Margin = new Thickness(0, 6, 0, 24) });
         _statusLabel = new TextBlock { Text = _status, FontSize = 22, FontWeight = FontWeights.SemiBold, Foreground = Brush("#1C1C1E"), TextWrapping = TextWrapping.Wrap };
         _detailLabel = new TextBlock { Text = _detail, FontSize = 15, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 18) };
         var statusPanel = new StackPanel { Margin = new Thickness(20) };
@@ -666,12 +666,12 @@ internal sealed class AlertApplication : System.Windows.Application
         panel.Children.Add(new Border { Background = System.Windows.Media.Brushes.White, CornerRadius = new CornerRadius(18), Child = statusPanel, Margin = new Thickness(0, 0, 0, 18) });
         panel.Children.Add(new TextBlock
         {
-            Text = "Windows asks for access to app notifications. Outlook Alert reacts only to New Outlook and does not read or save message text.",
+            Text = "Notification access is required. Only Outlook triggers alerts; message text is not read or saved.",
             FontSize = 14, Foreground = Brush("#48484A"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 14)
         });
         panel.Children.Add(new TextBlock
         {
-            Text = "For selected mailboxes only: in Outlook > Settings > General > Notifications, enable Mail for the accounts you want. Turn off Calendar and Documents alerts to keep these alerts focused on email. Outlook controls which accounts produce notifications.",
+            Text = "Choose which accounts send alerts in Outlook notification settings.",
             FontSize = 14, Foreground = Brush("#48484A"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 20)
         });
         _enableButton = ActionButton("Enable monitoring");
@@ -694,7 +694,8 @@ internal sealed class AlertApplication : System.Windows.Application
             Process.Start(new ProcessStartInfo("notepad.exe", '"' + path + '"') { UseShellExecute = true });
         };
         panel.Children.Add(logs);
-        panel.Children.Add(new TextBlock { Text = "Test appearance verifies the window only. Send a fresh email after enabling monitoring to verify actual detection. Exit from the tray stops monitoring until the next launch/sign-in.", FontSize = 13, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap });
+        panel.Children.Add(new TextBlock { Text = "The preview checks appearance only. Send a new email to test alerts.", FontSize = 13, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap });
+        panel.Children.Add(new TextBlock { Text = "facoding", FontSize = 12, Foreground = Brush("#8E8E93"), HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 18, 0, 0) });
         window.Content = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         window.Closing += (_, eventArgs) => { if (!_exiting) { eventArgs.Cancel = true; window.Hide(); } };
         _settingsWindow = window;

@@ -155,7 +155,7 @@ namespace OutlookAlert.Setup
         internal SetupWindow()
         {
             SuspendLayout();
-            Text = "Outlook Alert Setup 3.0";
+            Text = "Outlook Alert Setup 3.0.1";
             Font = new Font("Segoe UI", 10F);
             ForeColor = Color.FromArgb(28, 28, 30);
             BackColor = Color.White;
@@ -193,17 +193,15 @@ namespace OutlookAlert.Setup
             frame.Controls.Add(new Panel { Dock = DockStyle.Fill, Margin = Padding.Empty, BackColor = Color.FromArgb(229, 229, 234) }, 0, 1);
 
             AddRow(body, WrappedLabel("Outlook Alert", 28F, FontStyle.Bold, Color.FromArgb(28, 28, 30), new Padding(0, 0, 0, 6)));
-            AddRow(body, WrappedLabel("A clearer email alert, on every display.", 13F, FontStyle.Regular, Color.FromArgb(99, 99, 102), new Padding(0, 0, 0, 18)));
-            AddRow(body, WrappedLabel("Outlook only. One acknowledgement closes the alert on all screens.", 10F, FontStyle.Regular, ForeColor, new Padding(0, 0, 0, 12)));
-            AddRow(body, WrappedLabel("Choose which mail accounts produce notifications in Outlook. For email alerts only, turn off its Calendar and Documents notifications.", 10F, FontStyle.Regular, Color.FromArgb(99, 99, 102), new Padding(0, 0, 0, 20)));
+            AddRow(body, WrappedLabel("New Outlook alerts on every display.", 13F, FontStyle.Regular, Color.FromArgb(99, 99, 102), new Padding(0, 0, 0, 18)));
 
             var publisher = VerticalLayout(new Padding(18));
             publisher.BackColor = Color.FromArgb(234, 243, 255);
             publisher.Margin = new Padding(0, 0, 0, 18);
             publisher.Dock = DockStyle.Fill;
-            AddRow(publisher, WrappedLabel("Publisher approval", 12F, FontStyle.Bold, ForeColor, new Padding(0, 0, 0, 8)));
-            AddRow(publisher, WrappedLabel("This community release uses its own publisher certificate. Your administrator approval allows setup to trust that publisher on this computer; an identical existing approval is reused.", 10F, FontStyle.Regular, ForeColor, new Padding(0, 0, 0, 10)));
-            AddRow(publisher, WrappedLabel("Windows notification access is granted separately by each user. Only Outlook notifications trigger the large alert; message text is not saved.", 10F, FontStyle.Regular, ForeColor, Padding.Empty));
+            AddRow(publisher, WrappedLabel("Publisher certificate", 12F, FontStyle.Bold, ForeColor, new Padding(0, 0, 0, 8)));
+            AddRow(publisher, WrappedLabel("This release uses a self-signed certificate. Setup will trust it on this computer.", 10F, FontStyle.Regular, ForeColor, new Padding(0, 0, 0, 10)));
+            AddRow(publisher, WrappedLabel("Each Windows user must allow notification access once.", 10F, FontStyle.Regular, ForeColor, Padding.Empty));
             AddRow(body, publisher);
 
             var consent = new TableLayoutPanel
@@ -219,9 +217,9 @@ namespace OutlookAlert.Setup
             {
                 AutoSize = true, Anchor = AnchorStyles.Top | AnchorStyles.Left,
                 Margin = new Padding(0, 2, 9, 0), Text = string.Empty,
-                AccessibleName = "I trust this release and agree to approve its publisher certificate if required."
+                AccessibleName = "I agree to trust this publisher certificate."
             };
-            var consentText = WrappedLabel("I trust this release and agree to approve its publisher certificate if required.", 10F, FontStyle.Regular, ForeColor, Padding.Empty);
+            var consentText = WrappedLabel("I agree to trust this publisher certificate.", 10F, FontStyle.Regular, ForeColor, Padding.Empty);
             consentText.Cursor = Cursors.Hand;
             consentText.Click += (sender, e) => { if (trust.Enabled) trust.Checked = !trust.Checked; };
             trust.CheckedChanged += (sender, e) => install.Enabled = installed || (!busy && trust.Checked);
@@ -229,8 +227,7 @@ namespace OutlookAlert.Setup
             consent.Controls.Add(consentText, 1, 0);
             AddRow(body, consent);
 
-            AddRow(body, WrappedLabel("Windows 11 x64", 9F, FontStyle.Regular, Color.FromArgb(99, 99, 102), new Padding(0, 0, 0, 14)));
-            AddRow(body, WrappedLabel("Installation details", 10F, FontStyle.Bold, ForeColor, new Padding(0, 0, 0, 8)));
+            AddRow(body, WrappedLabel("Details", 10F, FontStyle.Bold, ForeColor, new Padding(0, 0, 0, 8)));
             details = new TextBox
             {
                 Dock = DockStyle.Fill, Multiline = true, ReadOnly = true,
@@ -246,7 +243,7 @@ namespace OutlookAlert.Setup
             var footer = VerticalLayout(new Padding(28, 14, 28, 14));
             footer.Dock = DockStyle.Fill;
             footer.BackColor = Color.FromArgb(250, 250, 252);
-            status = WrappedLabel("Ready to install for all Windows accounts on this computer.", 9F, FontStyle.Regular, Color.FromArgb(99, 99, 102), new Padding(0, 0, 0, 9));
+            status = WrappedLabel("Ready to install for all users.", 9F, FontStyle.Regular, Color.FromArgb(99, 99, 102), new Padding(0, 0, 0, 9));
             AddRow(footer, status);
             progress = new ProgressBar
             {
@@ -270,7 +267,7 @@ namespace OutlookAlert.Setup
             AddRow(footer, install);
             var signature = new LinkLabel
             {
-                Text = "Made by facoding  |  GitHub", AutoSize = true,
+                Text = "facoding", AutoSize = true,
                 Anchor = AnchorStyles.None, Margin = new Padding(0, 12, 0, 0),
                 LinkColor = Color.FromArgb(0, 102, 204),
                 ActiveLinkColor = Color.FromArgb(0, 91, 190),
@@ -280,7 +277,7 @@ namespace OutlookAlert.Setup
             signature.LinkClicked += (sender, e) =>
             {
                 try { Process.Start(new ProcessStartInfo("https://github.com/faCoding97") { UseShellExecute = true }); }
-                catch { MessageBox.Show(this, "Visit github.com/faCoding97 to see the developer's projects.", "facoding", MessageBoxButtons.OK, MessageBoxIcon.Information); }
+                catch { MessageBox.Show(this, "Open github.com/faCoding97 in your browser.", "facoding", MessageBoxButtons.OK, MessageBoxIcon.Information); }
             };
             AddRow(footer, signature);
             frame.Controls.Add(footer, 0, 2);
@@ -306,7 +303,7 @@ namespace OutlookAlert.Setup
             };
             FormClosing += (sender, e) =>
             {
-                if (busy) { e.Cancel = true; status.Text = "Please wait for the current installation step to finish."; }
+                if (busy) { e.Cancel = true; status.Text = "Installation is in progress. Please wait."; }
             };
             ResumeLayout(true);
         }

@@ -48,11 +48,8 @@ internal sealed class PopupPresenter
         }
         foreach (var window in _windows)
         {
-            ((TextBlock)window.FindName("CountText")).Text = preview ? "Appearance test" : _count == 1 ? "1 new email" : $"{_count} new emails";
+            ((TextBlock)window.FindName("CountText")).Text = preview ? "Preview" : _count == 1 ? "1 new email" : $"{_count} new emails";
             ((TextBlock)window.FindName("TimeText")).Text = at.ToLocalTime().ToString("HH:mm");
-            ((TextBlock)window.FindName("FooterText")).Text = preview
-                ? "This is a preview. Send a real email to test detection."
-                : "This alert stays open until you acknowledge it.";
         }
     }
 
@@ -141,16 +138,10 @@ internal sealed class PopupPresenter
                                 </Canvas>
                             </Viewbox>
                         </Border>
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                            <TextBlock Text="Outlook" FontSize="24" FontWeight="SemiBold" Foreground="#1C1C1E"/>
-                            <TextBlock Text="Mail notifications" FontSize="15" Margin="0,3,0,0" Foreground="#636366"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="LAST ALERT" FontSize="12" FontWeight="SemiBold" Foreground="#636366"
-                                       HorizontalAlignment="Right"/>
-                            <TextBlock x:Name="TimeText" Text="--:--" FontSize="24" FontWeight="SemiBold"
-                                       Foreground="#1C1C1E" HorizontalAlignment="Right" Margin="0,4,0,0"/>
-                        </StackPanel>
+                        <TextBlock Grid.Column="2" Text="Outlook" VerticalAlignment="Center"
+                                   FontSize="24" FontWeight="SemiBold" Foreground="#1C1C1E"/>
+                        <TextBlock Grid.Column="3" x:Name="TimeText" Text="--:--" FontSize="22"
+                                   Foreground="#636366" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
                     <TextBlock Grid.Row="2" FontSize="46" FontWeight="SemiBold" LineHeight="54"
                                Foreground="#1C1C1E" TextWrapping="Wrap">
@@ -167,21 +158,19 @@ internal sealed class PopupPresenter
                         </StackPanel>
                     </Border>
                     <Button Grid.Row="7" x:Name="AcknowledgeButton" Style="{StaticResource AcknowledgeStyle}"
-                            AutomationProperties.Name="Got it, close alerts on all screens">
+                            AutomationProperties.Name="Got it, close all alerts">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center">
                                 <Path Data="M 3,12 L 9,18 L 21,5" Stroke="White" StrokeThickness="2.6"
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
                             </Viewbox>
-                            <TextBlock Text="Got it, close on all screens" Foreground="White"
+                            <TextBlock Text="Got it, close all alerts" Foreground="White"
                                        FontSize="22" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
-                    <TextBlock Grid.Row="9" x:Name="FooterText" Text="This alert stays open until you acknowledge it."
-                               Foreground="#636366" FontSize="15" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Row="9" Text="facoding" Foreground="#636366" FontSize="13"
-                               FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center"
-                               Margin="16,0,0,0" AutomationProperties.Name="Made by facoding"/>
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               AutomationProperties.Name="Made by facoding"/>
                 </Grid>
             </Border>
         </Border>

@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.1 — 2026-11-24 (pre-release)
+
+- Simplifies the alert and settings copy for general use.
+- Removes redundant alert captions and keeps a small facoding signature below the acknowledgement button.
+- Shortens setup copy and removes mailbox-specific guidance from the installer.
+- Replaces the unpublished 3.0.0 release candidate.
+
 ## 3.0.0 — 2026-11-24 (pre-release)
 
 - Adds a small facoding signature to the alert and creator details to setup.

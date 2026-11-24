@@ -46,6 +46,27 @@ jobs:
         run: |
           & .\Tests.Windows\bin\Release\net48\OutlookAlert.LayoutSmoke.exe artifacts/layout
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Render the alert preview
+        shell: powershell
+        run: |
+          Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
+          $source = Get-Content App/PopupPresenter.cs -Raw
+          $match = [regex]::Match($source, 'private const string AlertXaml = """\r?\n([\s\S]*?)\r?\n""";')
+          if (-not $match.Success) { throw 'Alert markup was not found.' }
+          $view = [Windows.Markup.XamlReader]::Parse($match.Groups[1].Value)
+          try {
+            $view.FindName('CountText').Text = '1 new email'
+            $view.FindName('TimeText').Text = '14:30'
+            $view.Show()
+            $view.UpdateLayout()
+            $bitmap = [Windows.Media.Imaging.RenderTargetBitmap]::new(960, 640, 96, 96, [Windows.Media.PixelFormats]::Pbgra32)
+            $bitmap.Render($view)
+            $encoder = [Windows.Media.Imaging.PngBitmapEncoder]::new()
+            $encoder.Frames.Add([Windows.Media.Imaging.BitmapFrame]::Create($bitmap))
+            New-Item -ItemType Directory -Force artifacts/layout | Out-Null
+            $stream = [IO.File]::Create((Join-Path $pwd 'artifacts/layout/alert-preview.png'))
+            try { $encoder.Save($stream) } finally { $stream.Dispose() }
+          } finally { $view.Close() }
       - name: Save layout results and owned-form screenshots
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
