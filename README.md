@@ -19,6 +19,10 @@ When New Outlook posts a Windows notification, Outlook Alert displays a large ca
 
 It is useful when Outlook is minimized, you often switch between applications, or you miss a small notification on another monitor.
 
+![Outlook Alert installer with a scrollable body and fixed Install footer](docs/assets/installer-windows-layout.png)
+
+Installer source rendered during the Windows layout check. The footer stays reachable when the window is resized.
+
 The initial **3.0 public release is a pre-release**. Windows CI checks the installer layout, but real multi-profile provisioning, first-use permission and removal still need a Windows 11 device check.
 
 ## Requirements

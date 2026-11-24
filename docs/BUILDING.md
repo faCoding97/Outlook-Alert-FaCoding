@@ -73,8 +73,24 @@ Before publication, check the source and assets for personal mailbox addresses, 
 
 ## Windows layout checks
 
-GitHub Actions builds all projects on Windows and runs the portable gate tests plus
-`Tests.Windows/LayoutSmoke.csproj`. The layout harness constructs only the setup form,
-checks several viewport/larger-font combinations, and renders that form to PNG. It
-does not invoke setup's entrypoint, provision packages, trust certificates or install
-anything. Font stress is not a real per-monitor DPI-transition test.
+[Windows CI run 45404539302](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45404539302) completed successfully for
+[source commit 94f348c](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/94f348c0c4e4dcecc62bd64d5d8fca393f3830d7) on Windows Server 2025. The app, launcher and
+installer source builds passed, followed by all 24 notification-policy checks and
+all 9 installer layout cases.
+
+The layout cases combine viewports of 740×710, 640×560 and 460×440 with font factors
+of 1.0×, 1.5× and 2.0×. The harness constructs only the setup form, checks labels
+and the action area, and renders owned-form PNGs. It does not invoke setup's
+entrypoint, provision packages, trust certificates or install anything. Font
+stress is not a real per-monitor DPI-transition test.
+
+To run the same layout harness on Windows:
+
+```powershell
+dotnet build Tests.Windows/LayoutSmoke.csproj -c Release
+.\Tests.Windows\bin\Release\net48\OutlookAlert.LayoutSmoke.exe artifacts/layout
+```
+
+Multi-account installation, first-use notification permission, sign-in/startup,
+updates across profiles and machine uninstall remain Windows 11 device-validation
+items. CI success does not remove the release's pre-release status.

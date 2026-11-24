@@ -77,7 +77,12 @@ exact fingerprint when it is no longer needed; see [privacy and signing](PRIVACY
 
 ## Verification scope
 
-Builds and automated policy/layout tests are reported in GitHub Actions. Real
-provisioning, switching between several personal Windows profiles, permission prompts,
-startup after sign-in and machine uninstall still need a Windows 11 device test.
-The first public 3.0 release is therefore marked as a pre-release.
+[Windows CI run 45404539302](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45404539302) passed for
+[source commit 94f348c](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/94f348c0c4e4dcecc62bd64d5d8fca393f3830d7) on a Windows Server 2025 runner. It built the app,
+launcher and installer source, passed 24 notification-policy checks, and passed all
+9 installer viewport/font-stress cases.
+
+Those checks did not install the release or exercise UAC, package provisioning,
+several Windows accounts, notification consent, startup after sign-in or machine
+uninstall. Those paths still need a Windows 11 device test. The first public 3.0
+release remains a pre-release.
