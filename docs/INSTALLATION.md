@@ -81,15 +81,13 @@ exact fingerprint when it is no longer needed; see [privacy and signing](PRIVACY
 
 ## Verification scope
 
-The CI record below applies to the earlier 3.0.1 source. Fresh 3.1.0 verification
-has not yet been recorded here.
-
-[Windows CI run 45408497239](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45408497239) passed for
-[source commit 3dd4400](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/3dd4400960560eeaf7e15621af1151ace128ee85) on a Windows Server 2025 runner. It built the app,
+[Windows CI run 45411439320](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45411439320) passed for
+[source commit 713e339](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/713e3392c7976cd5afc00fdb5eaf29da2642a7ea) on a Windows Server 2025 runner. It built the app,
 launcher and installer source, passed 24 notification-policy checks, and passed all
-9 installer viewport/font-stress cases.
+9 installer viewport/font-stress cases. It also rendered the actual alert markup
+and loaded the settings button template.
 
 Those checks did not install the release or exercise UAC, package provisioning,
-several Windows accounts, notification consent, startup after sign-in or machine
-uninstall. Those paths still need a Windows 11 device test. The first public 3.0
-release remains a pre-release.
+several Windows accounts, notification consent, startup after sign-in, shortcut
+migration or machine uninstall. Those paths still need a Windows 11 device test.
+Version 3.1.0 remains a pre-release.

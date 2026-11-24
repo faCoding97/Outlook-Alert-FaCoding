@@ -73,10 +73,10 @@ Before publication, check the source and assets for personal mailbox addresses, 
 
 ## Windows layout checks
 
-[Windows CI run 45408497239](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45408497239) completed successfully for
-[source commit 3dd4400](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/3dd4400960560eeaf7e15621af1151ace128ee85) on Windows Server 2025. The app, launcher and
+[Windows CI run 45411439320](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45411439320) completed successfully for
+[source commit 713e339](https://github.com/faCoding97/Outlook-Alert-FaCoding/commit/713e3392c7976cd5afc00fdb5eaf29da2642a7ea) on Windows Server 2025. The app, launcher and
 installer source builds passed, followed by all 24 notification-policy checks and
-all 9 installer layout cases.
+all 9 installer layout cases. The actual alert markup was rendered and the settings button template loaded successfully.
 
 The layout cases combine viewports of 740×710, 640×560 and 460×440 with font factors
 of 1.0×, 1.5× and 2.0×. The harness constructs only the setup form, checks labels

@@ -1,15 +1,13 @@
 # Changelog
 
-## 3.1.0 — 2026-11-24 (pre-release, in preparation)
+## 3.1.0 — 2026-11-24 (pre-release)
 
 - Updates the alert styling and shortens the alert, settings and setup copy.
 - Credits facoding and KYCDD while keeping the app available to other New Outlook users.
 - Uses **Outlook Alert** as the visible app and shared Start menu name.
 - Replaces the older **Outlook Alert by facoding** shared shortcut during upgrade.
 
-Fresh 3.1.0 CI results and the public release upload are pending. Windows 11
-multi-account installation, notification permission, sign-in/startup and uninstall
-remain device-validation items.
+Verification: [Windows CI run 45411439320](https://github.com/faCoding97/Outlook-Alert-FaCoding/actions/runs/45411439320) passed source builds, 24 policy checks, 9 installer layout cases, alert rendering and settings button-template loading for source commit `713e339`. The public release upload is pending. Windows 11 multi-account installation, shortcut migration, notification permission, sign-in/startup and uninstall remain device-validation items.
 
 ## 3.0.1 — 2026-11-24 (pre-release)
 

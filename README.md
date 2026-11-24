@@ -19,7 +19,7 @@ When New Outlook posts a Windows notification, Outlook Alert displays a large ca
 
 It is useful when Outlook is minimized, you often switch between applications, or you miss a small notification on another monitor.
 
-![Outlook Alert with a short message and facoding signature](docs/assets/alert-preview.png)
+![Outlook Alert with KYCDD credit and a small facoding signature](docs/assets/alert-preview.png)
 
 ![Outlook Alert installer with a scrollable body and fixed Install footer](docs/assets/installer-windows-layout.png)
 
