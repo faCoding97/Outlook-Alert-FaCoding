@@ -155,7 +155,7 @@ namespace OutlookAlert.Setup
         internal SetupWindow()
         {
             SuspendLayout();
-            Text = "Outlook Alert Setup 3.1.0";
+            Text = "Outlook Alert Setup 3.2.0";
             Font = new Font("Segoe UI", 10F);
             ForeColor = Color.FromArgb(28, 28, 30);
             BackColor = Color.White;
@@ -571,7 +571,7 @@ namespace OutlookAlert.Setup
                     }
                     log("Provisioned " + fullName + " for this computer.");
                     log("Each account can open Outlook Alert from Start. Its launcher registers or updates that account when required.");
-                    log("Every user must separately allow notification access and enable startup once. Provisioning never grants those permissions.");
+                    log("Each user must open Outlook Alert once and allow notification access. The app registers automatic startup independently; Windows user and organization settings are respected.");
                     step("Installed for all Windows accounts. Open Outlook Alert from Start in your own account.", 100);
                 }
             }

@@ -12,7 +12,8 @@ When New Outlook posts a Windows notification, Outlook Alert displays a large ca
 - Uses a light interface with blue controls and rounded corners.
 - Shows **“New email received”** and **“Please review your Outlook inbox.”**
 - Closes every alert when you acknowledge one of them.
-- Can start automatically when you sign in to Windows.
+- Plays your choice of five notification sounds, with a Silent option and a sound test.
+- Starts automatically at Windows sign-in, with its actual Windows startup state shown in settings.
 - Filters the exact installed New Outlook application identity, so Telegram, WhatsApp and other apps cannot trigger its large alert.
 - Uses Windows notification events instead of repeatedly scanning open application windows.
 - Keeps notification access and settings separate for each Windows user.
@@ -25,7 +26,7 @@ It is useful when Outlook is minimized, you often switch between applications, o
 
 Installer source rendered during the Windows layout check. The footer stays reachable when the window is resized.
 
-The next public build is **3.1.0 (pre-release)**. Its public release upload is pending. Windows CI checks the installer layout, but real multi-profile provisioning, first-use permission and removal still need a Windows 11 device check.
+Version **3.2.0 (pre-release)** adds selectable sounds and fixes startup registration being skipped when monitoring setup is incomplete. Windows sign-in, audio playback, multi-profile provisioning and first-use permission still need a Windows 11 device check.
 
 ## Requirements
 
@@ -38,13 +39,13 @@ The installer includes the app runtime. You do not need Visual Studio, a .NET SD
 
 ## Install and start
 
-1. Download `OutlookAlert-Setup-3.1.0.exe` from [Releases](https://github.com/faCoding97/Outlook-Alert-FaCoding/releases).
+1. Download `OutlookAlert-Setup-3.2.0.exe` from the release files provided with this version.
 2. Double-click setup and approve Administrator access, or choose **Run as administrator**. Select the publisher consent and **Install for all users**.
 3. In your own normal Windows session, open **Outlook Alert** from Start, select **Enable monitoring**, and allow Windows notification access.
-4. Check that the app reports that monitoring is ready. Enable automatic startup and confirm the displayed startup status.
+4. Check that monitoring is ready and that the displayed startup status is enabled. Startup registration no longer depends on notification permission succeeding.
 5. Send a **new** test email after monitoring becomes ready.
 
-**Test appearance on all screens** previews the card only. A real incoming email is needed to check the complete notification path.
+Use **Test sound** to hear the selected tone and **Test appearance on all screens** to preview the card. A real incoming email is needed to check the complete notification path.
 
 For a computer with several Windows accounts, install once as Administrator, then complete notification permission and Outlook notification settings in **each** account. Windows does not let one user grant another user's notification permission. See the [installation guide](docs/INSTALLATION.md) for the release's exact registration and removal behavior.
 
@@ -73,7 +74,11 @@ These choices control Outlook notifications on that Windows profile. Disabling a
 
 Closing the settings window leaves Outlook Alert in the system tray. Its tray menu provides settings/status, an appearance test, a shortcut to Outlook and **Exit Outlook Alert**.
 
+Choose **Chime**, **Bell**, **Double beep**, **Soft ping**, **Urgent** or **Silent** in settings. The choice is saved for your Windows account. Sounds play once when new alerts arrive, with a two-second cooldown for bursts, rather than once per display. Acknowledging an alert stops its sound. The tones are included in the app and need no download.
+
 The alert stays above ordinary desktop applications until acknowledged. It is shown on the displays available to the current Windows session; mirrored displays share the same desktop surface.
+
+Startup settings show the actual Windows state and provide enable, disable and Windows Startup settings actions. If Windows marks startup as disabled by you or by organization policy, the app reports that state and does not override it.
 
 **Exit** stops monitoring until the app is opened again or enabled startup runs at a later sign-in. Automatic startup is not a Windows service or a crash-restarting watchdog. The app does not monitor while the PC is off, sleeping or signed out.
 

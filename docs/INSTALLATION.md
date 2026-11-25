@@ -1,6 +1,6 @@
 # Install for every Windows account
 
-Version 3.1 installs Outlook Alert for the computer, with a separate app session and
+Version 3.2 installs Outlook Alert for the computer, with a separate app session and
 notification permission for each person. Windows 11 x64 and New Outlook are required.
 
 ## Install once as Administrator
@@ -34,8 +34,11 @@ Then, separately in each Windows account:
 1. Install/configure New Outlook for that account if it is not already available.
 2. Open Outlook Alert and select **Enable monitoring**.
 3. Allow Windows notification access and wait for the ready status.
-4. Check that the displayed automatic-startup state is enabled.
-5. Send a fresh email to verify detection. The appearance test checks the window only.
+4. Check that the displayed automatic-startup state is enabled. Startup registration is attempted even if monitoring setup is incomplete.
+5. Choose a sound and select **Test sound**. The choice is saved for that account.
+6. Send a fresh email to verify detection. The appearance test checks the window only.
+
+The app declares automatic startup enabled and registers the task on its first launch. It must be opened once in each account. If Windows shows **Disabled by user**, use **Open Windows Startup settings** and enable Outlook Alert there. If organization policy disables it, the app reports that restriction. Its enable action does not override either restriction. The disable action turns startup off for the current account.
 
 Notification permission, Outlook sign-in, selected mailboxes, app settings and startup
 state belong to each user. Administrator installation cannot approve notification
@@ -90,4 +93,4 @@ and loaded the settings button template.
 Those checks did not install the release or exercise UAC, package provisioning,
 several Windows accounts, notification consent, startup after sign-in, shortcut
 migration or machine uninstall. Those paths still need a Windows 11 device test.
-Version 3.1.0 remains a pre-release.
+Those results apply to the earlier 3.1.0 source. Version 3.2.0 adds sound and startup checks; its actual Windows audio and sign-in behavior still require device validation and it remains a pre-release.

@@ -24,21 +24,20 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        bool backgroundStartup = StartupActivation.IsBackgroundStartup(args);
         using var singleton = new Mutex(true, @"Local\FarazOutlookAlertNativeV2", out bool first);
         if (!first)
         {
-            try { using var signal = EventWaitHandle.OpenExisting(@"Local\FarazOutlookAlertNativeShow"); signal.Set(); }
-            catch { }
+            if (StartupPolicy.ShouldSignalExistingInstance(backgroundStartup))
+            {
+                try { using var signal = EventWaitHandle.OpenExisting(@"Local\FarazOutlookAlertNativeShow"); signal.Set(); }
+                catch { }
+            }
             return;
         }
-        var application = new AlertApplication(args);
+        var application = new AlertApplication(args, backgroundStartup);
         application.Run();
     }
-}
-
-internal sealed class AlertSettings
-{
-    public bool MonitoringEnabled { get; set; }
 }
 
 internal sealed class AlertApplication : System.Windows.Application
@@ -46,6 +45,9 @@ internal sealed class AlertApplication : System.Windows.Application
     private static readonly string StateDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FarazOutlookAlertNative");
     private static readonly string StatePath = Path.Combine(StateDirectory, "settings.json");
     private readonly string[] _args;
+    private readonly bool _backgroundStartup;
+    private readonly StartupRegistration _startupRegistration = new();
+    private Button? _startupEnableButton, _startupDisableButton;
     private const int MaximumQueuedNotifications = 1024;
     private readonly object _callbackIngressLock = new();
     private readonly Queue<PendingNotification> _callbackIngress = new();
@@ -68,18 +70,30 @@ internal sealed class AlertApplication : System.Windows.Application
     private TextBlock? _statusLabel, _detailLabel, _startupLabel;
     private Button? _enableButton;
     private readonly PopupPresenter _popups = new();
+    private readonly AlertSoundPlayer _sounds;
+    private TextBlock? _soundLabel;
+    private string _soundStatus = "Plays once for new email. Uses your Windows volume and output device.";
     private readonly AlertSettings _settings;
     private string _status = "Alerts are off";
     private string _detail = "Enable monitoring to start.";
     private readonly EventWaitHandle _showSignal = new(false, EventResetMode.AutoReset, @"Local\FarazOutlookAlertNativeShow");
     private RegisteredWaitHandle? _showRegistration;
 
-    public AlertApplication(string[] args)
+    public AlertApplication(string[] args, bool backgroundStartup = false)
     {
         _args = args;
+        _backgroundStartup = backgroundStartup;
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         SessionEnding += (_, _) => ExitApplication();
         _settings = ReadSettings();
+        _settings.SoundId = AlertSoundCatalog.Normalize(_settings.SoundId);
+        _sounds = new AlertSoundPlayer(ex =>
+        {
+            LogError("sound_playback", ex);
+            _soundStatus = "Sound could not play. Check your Windows volume and output device, then try Test sound.";
+            if (_soundLabel != null) _soundLabel.Text = _soundStatus;
+        });
+        _popups.Closed += () => _sounds.Stop();
         DispatcherUnhandledException += (_, e) =>
         {
             LogError("unhandled_ui", e.Exception);
@@ -94,24 +108,32 @@ internal sealed class AlertApplication : System.Windows.Application
         base.OnStartup(e);
         CreateTray();
         _showRegistration = ThreadPool.RegisterWaitForSingleObject(_showSignal, (_, _) => Dispatcher.BeginInvoke(ShowSettings), null, Timeout.Infinite, false);
-        Log("app_started");
+        Log("app_started;activation=" + (_backgroundStartup ? "sign_in" : "manual"));
         bool forceSetup = _args.Any(x => x.Equals("--setup", StringComparison.OrdinalIgnoreCase));
-        if (forceSetup || !_settings.MonitoringEnabled) ShowSettings();
+        bool showSettings = StartupPolicy.ShouldShowSettings(_backgroundStartup, forceSetup);
+        if (showSettings) ShowSettings();
+        // Register independently of Outlook discovery or notification permission.
+        // A saved opt-out is not reapplied, so a later Windows setting is respected.
+        if (_settings.StartAtSignIn) await EnableStartupAsync();
+        else await RefreshStartupStatusAsync();
         try
         {
             if (_settings.MonitoringEnabled)
             {
                 bool enabled = await EnableMonitoringAsync(false);
-                if (!enabled) ShowSettings();
+                if (!enabled && showSettings) ShowSettings();
+                else if (!enabled) ShowBackgroundSetupNotice();
             }
+            else if (!showSettings) ShowBackgroundSetupNotice();
             await RefreshStartupStatusAsync();
-            if (_args.Any(x => x.Equals("--test", StringComparison.OrdinalIgnoreCase))) _popups.Show(1, DateTimeOffset.Now, true);
+            if (_args.Any(x => x.Equals("--test", StringComparison.OrdinalIgnoreCase))) ShowAlert(1, true);
         }
         catch (Exception ex)
         {
             LogError("startup", ex);
             StopMonitoring("Setup needs attention", "The listener could not start. Open settings to retry.");
-            ShowSettings();
+            if (showSettings) ShowSettings();
+            else ShowBackgroundSetupNotice();
         }
     }
 
@@ -119,7 +141,7 @@ internal sealed class AlertApplication : System.Windows.Application
     {
         var menu = new Forms.ContextMenuStrip();
         menu.Items.Add("Settings and status", null, (_, _) => Dispatcher.BeginInvoke(ShowSettings));
-        menu.Items.Add("Test alert on all screens", null, (_, _) => Dispatcher.BeginInvoke(() => _popups.Show(1, DateTimeOffset.Now, true)));
+        menu.Items.Add("Test alert on all screens", null, (_, _) => Dispatcher.BeginInvoke(() => ShowAlert(1, true)));
         menu.Items.Add("Open Outlook", null, (_, _) => OpenOutlook());
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("Exit Outlook Alert", null, (_, _) => Dispatcher.BeginInvoke(ExitApplication));
@@ -236,7 +258,7 @@ internal sealed class AlertApplication : System.Windows.Application
             Log("monitoring_ready;baseline_count=" + _gate.KnownCount);
             if (gapAdded > 0)
             {
-                _popups.Show(gapAdded, DateTimeOffset.Now, false);
+                ShowAlert(gapAdded, false);
                 Log("startup_gap_outlook_notifications_added=" + gapAdded);
             }
             _ = DrainNotificationQueueAsync();
@@ -471,7 +493,7 @@ internal sealed class AlertApplication : System.Windows.Application
                         int added = 0;
                         foreach (var stamp in snapshot)
                             if (_gate!.TryAcceptAdded(stamp)) added++;
-                        if (added > 0) _popups.Show(added, DateTimeOffset.Now, false);
+                        if (added > 0) ShowAlert(added, false);
                         Log("event_queue_recovery;outlook_notifications_added=" + added);
                     }
                     catch (Exception ex)
@@ -497,7 +519,7 @@ internal sealed class AlertApplication : System.Windows.Application
                     if (!IsCurrentSession(pending.Epoch) || !_running || lookup.Stamp is not NotificationStamp stamp) continue;
                     if (!gate.TryAcceptAdded(stamp)) continue;
                     long showing = Stopwatch.GetTimestamp();
-                    _popups.Show(1, DateTimeOffset.Now, false);
+                    ShowAlert(1, false);
                     long shown = Stopwatch.GetTimestamp();
                     SetStatus("Monitoring Outlook", "Alert displayed.");
                     // This is platform notification age, NOT native-toast-visible latency.
@@ -575,8 +597,8 @@ internal sealed class AlertApplication : System.Windows.Application
             _subscribed = false;
         }
         _notificationHandler = null;
-        _settings.MonitoringEnabled = false;
-        SaveSettings();
+        // A runtime failure changes current readiness, not the saved request to
+        // monitor. Retry that preference at the next launch without re-prompting.
         SetStatus(status, detail);
     }
 
@@ -590,37 +612,59 @@ internal sealed class AlertApplication : System.Windows.Application
 
     private async Task EnableStartupAsync()
     {
+        _settings.StartAtSignIn = true;
+        SaveSettings();
+        await ChangeStartupAsync(true);
+    }
+
+    private async Task DisableStartupAsync()
+    {
+        _settings.StartAtSignIn = false;
+        SaveSettings();
+        await ChangeStartupAsync(false);
+    }
+
+    private async Task ChangeStartupAsync(bool enabled)
+    {
         try
         {
-            var task = await StartupTask.GetAsync("OutlookAlertStartup");
-            if (task.State == StartupTaskState.Disabled)
-                await task.RequestEnableAsync();
+            var state = await _startupRegistration.SetDesiredAsync(enabled);
+            ApplyStartupState(state);
+            Log("startup_request;desired=" + enabled + ";state=" + state);
         }
-        catch (Exception ex) { LogError("startup_enable", ex); }
-        await RefreshStartupStatusAsync();
+        catch (Exception ex)
+        {
+            LogError("startup_change", ex);
+            ApplyStartupState(StartupRegistrationState.Unavailable);
+        }
     }
 
     private async Task RefreshStartupStatusAsync()
     {
-        string text;
-        try
-        {
-            var startup = await StartupTask.GetAsync("OutlookAlertStartup");
-            text = startup.State switch
-            {
-                StartupTaskState.Enabled => "Startup: enabled for this Windows account",
-                StartupTaskState.EnabledByPolicy => "Startup: enabled by your organization",
-                StartupTaskState.DisabledByUser => "Startup: disabled in Windows. Enable Outlook Alert in Settings > Apps > Startup.",
-                StartupTaskState.DisabledByPolicy => "Startup: disabled by your organization",
-                _ => "Startup: not enabled"
-            };
-        }
+        try { ApplyStartupState(await _startupRegistration.GetStateAsync()); }
         catch (Exception ex)
         {
             LogError("startup_status", ex);
-            text = "Startup: unavailable. The installed package must include its startup task.";
+            ApplyStartupState(StartupRegistrationState.Unavailable);
         }
-        if (_startupLabel != null) _startupLabel.Text = text;
+    }
+
+    private void ApplyStartupState(StartupRegistrationState state)
+    {
+        if (_startupLabel != null) _startupLabel.Text = StartupPolicy.Describe(state);
+        if (_startupEnableButton != null) _startupEnableButton.IsEnabled = state == StartupRegistrationState.Disabled;
+        if (_startupDisableButton != null) _startupDisableButton.IsEnabled = state == StartupRegistrationState.Enabled;
+    }
+
+    private void ShowBackgroundSetupNotice()
+    {
+        _tray?.ShowBalloonTip(8000, "Outlook Alert needs setup", "Open Outlook Alert from the tray to enable monitoring or check its status.", Forms.ToolTipIcon.Warning);
+    }
+
+    private static void OpenWindowsStartupSettings()
+    {
+        try { Process.Start(new ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true }); }
+        catch { System.Windows.MessageBox.Show("Open Windows Settings > Apps > Startup, then switch Outlook Alert on.", "Outlook Alert"); }
     }
 
     private void CheckPermissionHealth()
@@ -675,14 +719,48 @@ internal sealed class AlertApplication : System.Windows.Application
             FontSize = 14, Foreground = Brush("#48484A"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 20)
         });
         _enableButton = ActionButton("Enable monitoring");
-        _enableButton.Click += async (_, _) => { if (await EnableMonitoringAsync(true)) await EnableStartupAsync(); };
+        _enableButton.Click += async (_, _) => { await EnableMonitoringAsync(true); };
         panel.Children.Add(_enableButton);
-        var test = ActionButton("Test appearance on all screens", false);
-        test.Click += (_, _) => _popups.Show(1, DateTimeOffset.Now, true);
+        var test = ActionButton("Test alert on all screens", false);
+        test.Click += (_, _) => ShowAlert(1, true);
         panel.Children.Add(test);
-        var startup = ActionButton("Enable automatic startup", false);
-        startup.Click += async (_, _) => { await EnableStartupAsync(); };
-        panel.Children.Add(startup);
+        panel.Children.Add(new TextBlock { Text = "Alert sound", FontSize = 18, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 14, 0, 8) });
+        var soundChoice = new ComboBox
+        {
+            ItemsSource = AlertSoundCatalog.Choices, DisplayMemberPath = "Label", SelectedValuePath = "Id",
+            SelectedValue = _settings.SoundId, FontSize = 16, Padding = new Thickness(12, 8, 12, 8),
+            Margin = new Thickness(0, 0, 0, 10)
+        };
+        System.Windows.Automation.AutomationProperties.SetName(soundChoice, "Alert sound");
+        soundChoice.SelectionChanged += (_, _) =>
+        {
+            _sounds.Stop();
+            _settings.SoundId = AlertSoundCatalog.Normalize(soundChoice.SelectedValue as string);
+            SaveSettings();
+            _soundStatus = _settings.SoundId == AlertSoundCatalog.SilentId
+                ? "Silent selected. Email alerts will still appear on all screens."
+                : "Plays once for new email. Uses your Windows volume and output device.";
+            if (_soundLabel != null) _soundLabel.Text = _soundStatus;
+        };
+        panel.Children.Add(soundChoice);
+        var testSound = ActionButton("Test sound", false);
+        testSound.Click += (_, _) => _sounds.Play(_settings.SoundId, preview: true);
+        panel.Children.Add(testSound);
+        _soundLabel = new TextBlock
+        {
+            Text = _settings.SoundId == AlertSoundCatalog.SilentId ? "Silent selected. Email alerts will still appear on all screens." : _soundStatus,
+            FontSize = 13, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 20)
+        };
+        panel.Children.Add(_soundLabel);
+        _startupEnableButton = ActionButton("Enable automatic startup", false);
+        _startupEnableButton.Click += async (_, _) => { await EnableStartupAsync(); };
+        panel.Children.Add(_startupEnableButton);
+        _startupDisableButton = ActionButton("Disable automatic startup", false);
+        _startupDisableButton.Click += async (_, _) => { await DisableStartupAsync(); };
+        panel.Children.Add(_startupDisableButton);
+        var windowsStartup = ActionButton("Open Windows startup settings", false);
+        windowsStartup.Click += (_, _) => OpenWindowsStartupSettings();
+        panel.Children.Add(windowsStartup);
         _startupLabel = new TextBlock { Text = "Checking startup status...", FontSize = 13, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 10, 0, 16) };
         panel.Children.Add(_startupLabel);
         var logs = new Button { Content = "Open local diagnostic log", HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(8), Margin = new Thickness(0, 0, 0, 12) };
@@ -694,13 +772,20 @@ internal sealed class AlertApplication : System.Windows.Application
             Process.Start(new ProcessStartInfo("notepad.exe", '"' + path + '"') { UseShellExecute = true });
         };
         panel.Children.Add(logs);
-        panel.Children.Add(new TextBlock { Text = "The preview checks appearance only. Send a new email to test alerts.", FontSize = 13, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap });
-        panel.Children.Add(new TextBlock { Text = "Built for KYCDD  ·  facoding", FontSize = 12, Foreground = Brush("#7B8798"), HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 18, 0, 0) });
+        panel.Children.Add(new TextBlock { Text = "The test checks the popup and selected sound. Send a new email to check detection.", FontSize = 13, Foreground = Brush("#636366"), TextWrapping = TextWrapping.Wrap });
+        panel.Children.Add(new TextBlock { Text = "Version 3.2.0  ·  Built for KYCDD  ·  facoding", FontSize = 12, Foreground = Brush("#7B8798"), HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 18, 0, 0) });
         window.Content = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         window.Closing += (_, eventArgs) => { if (!_exiting) { eventArgs.Cancel = true; window.Hide(); } };
         _settingsWindow = window;
+        window.Activated += (_, _) => { CheckPermissionHealth(); _ = RefreshStartupStatusAsync(); };
         window.Show(); window.Activate();
         _ = RefreshStartupStatusAsync();
+    }
+
+    private void ShowAlert(int added, bool preview)
+    {
+        _popups.Show(added, DateTimeOffset.Now, preview);
+        _sounds.Play(_settings.SoundId, preview);
     }
 
     private static Button ActionButton(string title, bool primary = true) => new()
@@ -742,7 +827,13 @@ internal sealed class AlertApplication : System.Windows.Application
     }
     private void SaveSettings()
     {
-        try { Directory.CreateDirectory(StateDirectory); File.WriteAllText(StatePath, JsonSerializer.Serialize(_settings)); }
+        try
+        {
+            Directory.CreateDirectory(StateDirectory);
+            string temporary = StatePath + ".tmp";
+            File.WriteAllText(temporary, JsonSerializer.Serialize(_settings));
+            File.Move(temporary, StatePath, overwrite: true);
+        }
         catch (Exception ex) { LogError("save_settings", ex); }
     }
     private static string Code(Exception ex) => "0x" + ex.HResult.ToString("X8");
@@ -772,6 +863,7 @@ internal sealed class AlertApplication : System.Windows.Application
         if (_listener != null && _subscribed && _notificationHandler != null) { try { _listener.NotificationChanged -= _notificationHandler; } catch { } }
         _notificationHandler = null;
         _popups.CloseAll();
+        _sounds.Dispose();
         _showRegistration?.Unregister(null);
         _showSignal.Dispose();
         _tray?.Dispose();

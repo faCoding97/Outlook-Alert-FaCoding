@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../App/AlertSoundCatalog.cs" Link="AlertSoundCatalog.cs" />
+    <EmbeddedResource Include="../App/Sounds/*.wav" LogicalName="Faraz.OutlookAlert.Sounds.%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>
