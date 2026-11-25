@@ -27,9 +27,22 @@ Use the local log to investigate a continuing delay. Do not post message content
 
 ## Nothing opens after signing in
 
-Check the actual startup state shown in Outlook Alert settings and **Windows Settings → Apps → Startup**. A user or organization can disable startup. Complete notification permission in the Windows account that is signed in.
+Open **Outlook Alert** from Start once in the Windows account that is signed in. Version 3.2 registers startup independently of notification-monitoring setup. Check the actual state shown in settings:
+
+- **Enabled**: the task is registered for that account. Look for the tray icon after a new Windows sign-in; its settings window can remain hidden.
+- **Disabled by user**: use **Open Windows Startup settings** and enable Outlook Alert. Windows does not allow the app to reverse this state itself.
+- **Disabled by organization**: the displayed restriction comes from Windows policy.
+- **Unavailable**: launch the installed app from Start, then check its diagnostic log and the installer result.
+
+Complete notification permission separately in that account. A registered startup task does not itself grant notification access.
 
 If you selected Exit from the tray, open the app again or sign in again with startup enabled. Closing the settings window leaves the app running; Exit stops it.
+
+## The alert is visible but silent
+
+In settings, choose a tone instead of **Silent** and select **Test sound**. Check the Windows output device, system volume and the app's volume in the volume mixer. Tones are included locally, so playback needs no internet access.
+
+Real alerts have a two-second sound cooldown during bursts. Acknowledging the cards stops playback. A sound failure is recorded in the local diagnostic log and does not stop visual alerts. A successful preview does not verify Outlook notification delivery; send a new email while monitoring is ready.
 
 ## Only one monitor shows a card
 

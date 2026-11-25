@@ -11,6 +11,7 @@ namespace Faraz.OutlookAlert;
 
 internal sealed class PopupPresenter
 {
+    public event Action? Closed;
     private readonly List<Window> _windows = new();
     private int _count;
     private bool _allowClose, _preview;
@@ -60,6 +61,7 @@ internal sealed class PopupPresenter
         _windows.Clear();
         _count = 0;
         _preview = false;
+        Closed?.Invoke();
     }
 
     [DllImport("user32.dll", SetLastError = true)]

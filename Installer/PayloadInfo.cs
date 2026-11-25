@@ -4,9 +4,9 @@ namespace OutlookAlert.Setup
     // The installer refuses to run with placeholder or mismatched hashes.
     internal static class PayloadInfo
     {
-        internal const string MsixSha256 = "3D10964BE35252BC7DA39C598D214BE1330BB6D91E139DBC7850A75122B85D6A";
-        internal const string CertificateSha256 = "63987BB0E5CB2B2FAC06F7BA51D7259E2CCF4692CA477F45C79FE13D3C7123EB";
-        internal const string LauncherSha256 = "218A0A148965ACE3F8177DAB599B9A0F68C196AA6C2B3ECE0B87AFD94238BF54";
+        internal const string MsixSha256 = "183F1B405D1BFD06223E076EC561B4DCEFB6CC96440CEE8CDBCB45F276786A49";
+        internal const string CertificateSha256 = "30FAB459617FAEDE69DFFF1DF3FE8FA39708C03C2F322EEAEB240EED87387009";
+        internal const string LauncherSha256 = "3FF20B116625E6518F4EF862B977743FC3877DD0C65A8B79674C8063089576F0";
         internal const string PackageName = "Faraz.OutlookAlert";
         internal const string ApplicationId = "App";
     }

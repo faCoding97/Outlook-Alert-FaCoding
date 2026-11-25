@@ -39,6 +39,10 @@ jobs:
         run: dotnet build Installer/OutlookAlert.Setup.csproj -c Release
       - name: Check notification identity and duplicate handling
         run: dotnet run --project Tests/NotificationGate.Tests.csproj -c Release
+      - name: Check startup state and user choices
+        run: dotnet run --project StartupTests/StartupTests.csproj -c Release
+      - name: Check sound selection and burst handling
+        run: dotnet run --project SoundTests/SoundTests.csproj -c Release
       - name: Build isolated installer layout check
         run: dotnet build Tests.Windows/LayoutSmoke.csproj -c Release
       - name: Check installer layout on Windows

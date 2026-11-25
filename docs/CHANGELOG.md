@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.2.0 — 2026-11-25 (pre-release)
+
+- Adds five included alert tones: Chime, Bell, Double beep, Soft ping and Urgent, plus Silent.
+- Saves each user's sound choice and adds a sound preview. Real alerts play once per burst, with a two-second cooldown; acknowledgement stops playback.
+- Registers automatic startup independently of notification-monitoring setup and declares startup enabled for a newly launched packaged app.
+- Displays the actual Windows startup state, refreshes it when settings regain focus, and adds enable, disable and Windows Startup settings actions.
+- Respects startup changes made by the Windows user or organization policy.
+- Preserves the multi-account installer, shared Start menu entry and per-user notification permission.
+
+Temporary monitoring failures retain the saved monitoring preference so the next launch retries it. The packaged runtime remains on 10.0.15.
+
+Verification: 117 portable notification, startup, settings and sound checks passed; Windows-targeted source compilation passed. Actual Windows audio playback, notification delivery and startup after sign-in remain device-validation items.
+
 ## 3.1.0 — 2026-11-24 (pre-release)
 
 - Updates the alert styling and shortens the alert, settings and setup copy.

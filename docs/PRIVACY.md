@@ -12,7 +12,7 @@ The app uses the accepted notification's ID and creation time to suppress duplic
 
 ## Local state
 
-The current implementation keeps each user's monitoring preference and a bounded diagnostic log in that user's application-data area. Windows manages notification-access and startup permissions separately for each profile.
+The current implementation keeps each user's monitoring preference, selected sound, startup preference and a bounded diagnostic log in that user's application-data area. Windows manages notification-access and actual startup permissions separately for each profile. The five alert tones are included in the app and play locally; the app does not record microphone audio.
 
 The log contains:
 

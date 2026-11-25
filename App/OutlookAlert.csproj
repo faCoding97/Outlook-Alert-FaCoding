@@ -15,8 +15,13 @@
     <RootNamespace>Faraz.OutlookAlert</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>../Packaging/Assets/App.ico</ApplicationIcon>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
     <!-- WPF owns all visible windows; its per-monitor DPI manifest is intentional. -->
     <NoWarn>$(NoWarn);WFO0003</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Update="Microsoft.NETCore.App" RuntimeFrameworkVersion="10.0.15" />
+    <FrameworkReference Update="Microsoft.WindowsDesktop.App" RuntimeFrameworkVersion="10.0.15" />
+    <EmbeddedResource Include="Sounds/*.wav" LogicalName="Faraz.OutlookAlert.Sounds.%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>

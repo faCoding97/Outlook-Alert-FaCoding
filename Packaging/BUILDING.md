@@ -1,6 +1,6 @@
 # Windows package build
 
-The shipped MSIX uses Windows package identity `Faraz.OutlookAlert`, app ID `App`, publisher `CN=Faraz Outlook Alert`, and the `userNotificationListener` capability. Startup is initially disabled in the manifest; onboarding enables the declared task only after monitoring is ready.
+The shipped MSIX uses Windows package identity `Faraz.OutlookAlert`, app ID `App`, publisher `CN=Faraz Outlook Alert`, and the `userNotificationListener` capability. Startup defaults to enabled in the desktop manifest and is registered on first app launch independently of monitoring. The app checks the native state and respects Windows user and organization restrictions.
 
 `build_package.py --publish ../Publish --output ../Payload/OutlookAlert.msix` copies the self-contained Windows publish output into an isolated staging directory, adds this manifest and assets, packs with Microsoft's MSIX SDK, signs with `osslsigncode`, verifies the Authenticode signature, and validates the package by unpacking it through the Microsoft SDK. The output `.metadata.json` pins package and public certificate hashes for Setup.
 

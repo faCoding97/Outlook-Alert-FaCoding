@@ -14,7 +14,7 @@ The repository contains the app and installer source. Release binaries are publi
 | `Packaging/` | MSIX manifest, public icon assets and package build/signing instructions |
 | `docs/` | Installation, privacy, troubleshooting and development notes |
 
-The app targets `net10.0-windows10.0.19041.0`; the released runtime identifier is `win-x64`. The installer targets .NET Framework 4.8, which Windows 11 supplies. Building requires the .NET 10 SDK.
+The app targets `net10.0-windows10.0.19041.0`; the released runtime identifier is `win-x64`. Core and Windows Desktop runtime references are pinned to 10.0.15. The installer targets .NET Framework 4.8, which Windows 11 supplies. Building requires the .NET 10 SDK.
 
 ## Compile and test
 
@@ -23,6 +23,8 @@ From the repository root:
 ```powershell
 dotnet restore App/OutlookAlert.csproj
 dotnet run --project Tests/NotificationGate.Tests.csproj -c Release
+dotnet run --project StartupTests/StartupTests.csproj -c Release
+dotnet run --project SoundTests/SoundTests.csproj -c Release
 dotnet build App/OutlookAlert.csproj -c Release
 dotnet build Launcher/OutlookAlert.Launcher.csproj -c Release
 dotnet build Installer/OutlookAlert.Setup.csproj -c Release
